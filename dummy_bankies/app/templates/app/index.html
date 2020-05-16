@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <!-- Bootstrap min CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <title>Tasks view</title>
+
+    <style>
+        td {
+          padding: 3px;
+        }
+        tr {
+          border-bottom: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+{% if messages %}
+    {% for message in messages %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="alert alert-success" role="alert">
+            {{message}}
+        </div>
+        {% endif %}
+        {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}
+        <div class="alert alert-danger" role="alert">
+            {{message}}
+        </div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+{% if user.is_authenticated %}
+  Logged as {{ user.username }} (<a href="#">logout</a>
+    | <a href="#">change password</a>)
+{% endif %}
+{% if tasks %}
+    <table>
+        <tr>
+            <th>Score</th><th>Task</th><th>Category</th><th>Type</th><td></td>
+        </tr>
+        {% for task in tasks %}
+            <tr>
+                <td>
+                    {% if task.type == "simple" %}
+                        {{ task.points|floatformat:"0" }} p.
+                    {% elif task.type == "deadline" %}
+                        {{ task.deadline_passed }} %
+                    {% endif %}
+                </td>
+                <td>{{ task.description }}</td>
+                <td>
+                    {% if task.category %}
+                        {{task.category.name}}
+                    {% endif %}
+                </td>
+                <td>
+                    {{task.type}}
+                </td>
+                <td>
+                    [<a href="#">edit</a>]
+                    [<a href="#">done</a>]
+                    [<a href="#">delete</a>]
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% else %}
+    <p>Brak zadań</p>
+{% endif %}
+
+{% if categories %}
+    <ul>
+        <li><a href="#">All</a></li>
+    {% for category in categories %}
+        <li><a href="#">{{ category.name }}</a></li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>Brak kategorii</p>
+{% endif %}
+
+<a href="#">Add new task</a>
+<a href="#">Category settings</a>
+</body>
+</html>
